@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/utilities/constants.dart';
 import 'package:weather_app/services/weather.dart';
+import 'package:weather_app/screens/city_screen.dart';
+import 'package:page_transition/page_transition.dart';
 
 class LocationScreen extends StatefulWidget {
   LocationScreen({this.locationWeather});
@@ -22,13 +24,19 @@ class _LocationScreenState extends State<LocationScreen> {
     updateScreen(widget.locationWeather);
   }
 
-  void updateScreen(weatherData) {
+  void updateScreen(dynamic weatherData) {
     setState(() {
+      if (weatherData == null) {
+        cityName = '';
+        temperature = 0;
+        weatherMessage = "Error In Location";
+       weatherIcon = "Error";
+        return;
+     }
       cityName = weatherData['name'];
-      double temp = weatherData['main']['temp'];
-      temperature = temp.toInt();
+      temperature = weatherData['main']['temp'];
       weatherMessage = weatherModel.getMessage(temperature);
-      var condition = weatherData['weather'][0]['id'];
+      int condition = weatherData['weather'][0]['id'];
       weatherIcon = weatherModel.getWeatherIcon(condition);
     });
   }
@@ -55,14 +63,20 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async{
+                      var weatherData = await weatherModel.getLocationWeather();
+                      updateScreen(weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
                     ),
                   ),
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, PageTransition(type: PageTransitionType.fade,
+                          child: CityScreen()));
+                    },
                     child: Icon(
                       Icons.location_city,
                       size: 50.0,
