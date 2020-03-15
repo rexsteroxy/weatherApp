@@ -1,12 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/utilities/constants.dart';
+import 'package:weather_app/services/weather.dart';
 
 class LocationScreen extends StatefulWidget {
+  LocationScreen({this.locationWeather});
+  final locationWeather;
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  WeatherModel weatherModel = new WeatherModel();
+  String weatherIcon;
+  String weatherMessage;
+  String cityName;
+  int temperature;
+  int condition;
+
+  void initState() {
+    super.initState();
+    updateScreen(widget.locationWeather);
+  }
+
+  void updateScreen(weatherData) {
+    setState(() {
+      cityName = weatherData['name'];
+      double temp = weatherData['main']['temp'];
+      temperature = temp.toInt();
+      weatherMessage = weatherModel.getMessage(temperature);
+      var condition = weatherData['weather'][0]['id'];
+      weatherIcon = weatherModel.getWeatherIcon(condition);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,11 +75,11 @@ class _LocationScreenState extends State<LocationScreen> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      '32°',
+                      '$temperature°',
                       style: kTempTextStyle,
                     ),
                     Text(
-                      '☀️',
+                      weatherIcon,
                       style: kConditionTextStyle,
                     ),
                   ],
@@ -62,7 +88,7 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "It's 🍦 time in San Francisco!",
+                  "$weatherMessage in $cityName!",
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
@@ -74,3 +100,10 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 }
+
+//String cityName= jd['name'];
+//double temperature = jd['main']['temp'];
+//int condition = jd['weather'][0]['id'];
+//print('Temperature from JSON: $temperature');
+//print('CityName from JSON: $cityName');
+//print('Condition from JSON: $condition');
