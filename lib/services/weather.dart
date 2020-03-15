@@ -45,4 +45,13 @@ class WeatherModel {
    var weatherData = await networkCall.getData();
    return weatherData;
   }
+
+
+  Future<dynamic> getCityWeather(String cityName)async{
+    NetworkCall networkCall = new NetworkCall(
+        'https://api.openweathermap.org/data/2.5/'
+        'weather?q=$cityName&appid=$apiKey&units=metric');
+    var weatherData = await networkCall.getData();
+    return weatherData;
+  }
 }

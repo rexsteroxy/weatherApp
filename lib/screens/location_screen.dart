@@ -73,9 +73,13 @@ class _LocationScreenState extends State<LocationScreen> {
                     ),
                   ),
                   FlatButton(
-                    onPressed: () {
-                      Navigator.push(context, PageTransition(type: PageTransitionType.fade,
+                    onPressed: () async{
+                     var typedName = await Navigator.push(context, PageTransition(type: PageTransitionType.fade,
                           child: CityScreen()));
+                     if(typedName != null){
+                       var weatherData = await weatherModel.getCityWeather(typedName);
+                       updateScreen(weatherData);
+                     }
                     },
                     child: Icon(
                       Icons.location_city,
